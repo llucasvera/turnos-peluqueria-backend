@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Turnos - Peluquería</title>
+</head>
+<body>
+    <h1>Reservar Turno</h1>
+
+    <form id="formulario-turno">
+        <input type="text" id="nombre" placeholder="Nombre" required><br>
+        <input type="text" id="telefono" placeholder="Teléfono" required><br>
+        <input type="text" id="servicio" placeholder="Servicio" required><br>
+        <input type="date" id="fecha" required><br>
+        <input type="time" id="hora" required><br>
+        <button type="submit">Reservar</button>
+    </form>
+
+    <h2>Turnos Agendados</h2>
+    <div id="turnos"></div>
+
+    <script>
+        // Función para enviar un nuevo turno
+        document.getElementById('formulario-turno').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const turno = {
+                nombre_cliente: document.getElementById('nombre').value,
+                telefono_cliente: document.getElementById('telefono').value,
+                servicio: document.getElementById('servicio').value,
+                fecha: document.getElementById('fecha').value,
+                hora: document.getElementById('hora').value
+            };
+
+            const respuesta = await fetch('http://localhost:3000/reservar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(turno)
+            });
+
+            const resultado = await respuesta.json();
+            alert(resultado.mensaje);
+            cargarTurnos();
+        });
+
+        // Función para traer y mostrar turnos
+        async function cargarTurnos() {
+            const respuesta = await fetch('http://localhost:3000/turnos');
+            const turnos = await respuesta.json();
+
+            const contenedor = document.getElementById('turnos');
+            contenedor.innerHTML = '';
+
+            turnos.forEach(turno => {
+                contenedor.innerHTML += `
+                    <p><strong>${turno.fecha} ${turno.hora}</strong> - ${turno.nombre_cliente} (${turno.servicio})</p>
+                `;
+            });
+        }
+
+        // Cargar turnos apenas abre la página
+        cargarTurnos();
+    </script>
+</body>
+</html>

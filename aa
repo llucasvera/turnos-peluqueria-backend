@@ -1,0 +1,9 @@
+const mysql = require('mysql2');
+
+connection.connect((err) => {
+    if (err) {
+        console.error('Error conectando a la base de datos:', err);
+        return;
+    }
+    console.log('Base de datos conectada');
+});
